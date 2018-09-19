@@ -1,0 +1,8 @@
+public class mytestclass {
+	
+	static final String TAG = 'mytestclass';
+
+    static void mytestmethod() {
+
+    }
+}
