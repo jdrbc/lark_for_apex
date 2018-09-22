@@ -6,7 +6,7 @@ public class mytestclass {
 
 	String propertyWithGetter {
 		get {
-			return 'test'
+			return 'test';
 		}
 		set;
 	}

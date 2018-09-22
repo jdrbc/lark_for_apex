@@ -101,7 +101,7 @@ artimatic_expr: expr arithmatic_operator expr
 bitwise_expr: expr bitwise_operator expr
 dml_expr: dml_operator expr
 variable_declaration: FINAL? type name [EQUALS expr]
-array_initializer: CURLY_BRACKET_OPEN [type? name (COMMA expr)* ] CURLY_BRACKET_CLOSE
+array_initializer: CURLY_BRACKET_OPEN [expr (COMMA expr)* ] CURLY_BRACKET_CLOSE
 map_initializer: CURLY_BRACKET_OPEN map_assignment_list CURLY_BRACKET_CLOSE
 atom: type | number | string+
 
