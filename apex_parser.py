@@ -5,12 +5,6 @@ import multiprocessing
 from time import time
 from lark import Lark, Transformer, v_args, UnexpectedToken
 
-"""
-python apex_parser.py apex.lark test_apex_files/fflib_QueryFactory.cls
-
-apex grammer: https://github.com/forcedotcom/apex-tmLanguage/blob/master/grammars/apex.tmLanguage
-"""
-
 class TreeToApex(Transformer):
     unsupported_rules = ['comment', 'inline_comment', 'multiline_comment']
     def throwErrorIfSupportedItem(self, item):
