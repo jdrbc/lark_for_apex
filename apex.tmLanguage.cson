@@ -81,15 +81,6 @@ repository:
   "class-or-trigger-members":
     patterns: [
       {
-        include: "#comment"
-      }
-      {
-        include: "#storage-modifier"
-      }
-      {
-        include: "#sharing-modifier"
-      }
-      {
         include: "#type-declarations"
       }
       {
@@ -103,15 +94,6 @@ repository:
       }
       {
         include: "#variable-initializer"
-      }
-      {
-        include: "#constructor-declaration"
-      }
-      {
-        include: "#method-declaration"
-      }
-      {
-        include: "#punctuation-semicolon"
       }
     ]
   "interface-members":

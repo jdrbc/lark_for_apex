@@ -1,29 +1,166 @@
-?start: comment* class_def
-class_def: access_modifier? "class" name "{" class_contents "}"
-!access_modifier: "public" | "private" | "global"
-// inner class, property or method
-class_contents: (class_def | line | method_def | comment)*
-// TODO getters and setters
-method_def: access_modifier? static? type name "(" parameter* ")" "{" method_contents "}"
-method_contents: (line | comment)*
-parameter: type name ","?
+?start: class_declaration
+			| enum_declaration
+			// trigger_declaration
+			// interface_declaration
+
+// class specific
+class_declaration: annotation_declaration? modifier* class_word name type_parameter_list? extends_class? implements_class? "{" class_member* "}"
+class_member: enum_declaration
+				| class_declaration // inner class
+				| property_declaration
+				| constructor_declaration
+				| method_declaration
+				| block 
+extends_class: "extends" name
+implements_class: "implements" arg_list
+constructor_declaration: annotation_declaration? modifier* name ["(" typed_arg_list? ")"] block
+method_declaration: annotation_declaration? modifier* type name "(" typed_arg_list? ")" (block | ";")
+property_declaration: annotation_declaration? modifier* type name [";" | "=" expr ";" | property_accessors]
+property_accessors: "{" (access_modifier? "get" (block? | ";"))? (access_modifier? "set" (block | ";"))? "}"
+
+// enum specific
+enum_declaration: access_modifier? "enum" name "{" arg_list "}"
+
+// modifiers
+annotation_declaration: "@" name ["(" [name "=" name] ")"]
+modifier: access_modifier 
+			| "with" "sharing" 
+			| "without" "sharing" 
+			| "abstract"
+			| "virtual"
+			| "override"
+			| "static"
+			| "final"
+!access_modifier: "public" | "private" | "global" | "protected"
+
+// block contents
+block: static? "{" statement* "}"
+statement: (expr
+				| variable_declaration ("," statement)*
+				| assignment_statement ("," statement)*
+				| return_statement
+				| do_statement
+				| while_statement
+				| for_statement
+				| switch_statement
+				| when_statement
+				| if_statement
+				| else_statement
+				| break_statement
+				| continue_statement
+				| try_statement
+				| throw_statement
+			 	| block) SEMICOLON? 
+assignment_statement: expr assignment_operator expr
+return_statement: "return" expr? ";"
+do_statement: "do" block while_statement ";"
+while_statement: "while" "(" expr ")" statement? block?
+for_statement: "for" "(" [statement? ";" expr? ";" expr? | expr ":" expr] ")" statement? block? SEMICOLON?
+switch_statement: "switch" "on" expr block
+when_statement: "when" (expr ("," expr)* | "else") block
+if_statement: "if" "(" expr ")" (statement | block)
+else_statement: "else" statement
+break_statement: "break" ";"
+continue_statement: "continue" ";"
+try_statement: try_block catch_clause* finally_clause?
+try_block: "try" block
+catch_clause: "catch" "(" name name ")" block
+finally_clause: "finally" block
+throw_statement: "throw" expr ";"
+expr: atom 
+		| variable_declaration
+		| inc_expr 
+		| logical_expr
+		| comparison_expr
+		| artimatic_expr
+		| bitwise_expr
+		| "(" expr ")"
+		| expr "++"
+		| "++" expr
+		| "-" expr
+		| "--" expr
+		| expr "--"
+		| "!" expr
+		| dml_expr
+		| soql_query_expr
+		| "new" expr 
+		| "(" type ")" expr // cast
+		| expr "[" arg_list? "]" // array index access
+		| expr "(" [arg_list | assignment_list] ")" // constructor or function call
+		| expr "." expr // attribute access
+		| expr "." class_word // get class
+		| expr "." "get" // get object
+		| expr "." "set" // set 
+		| expr "instanceof" type
+		| expr array_initializer
+		| expr map_initializer
+		| expr "?" expr ":" expr
+// TODO https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_select.htm
+soql_query_expr: /\[SELECT.+FROM.+\]/i
+inc_expr: expr "++"
+logical_expr: expr logical_operator expr
+comparison_expr: expr comparison_operator expr
+artimatic_expr: expr arithmatic_operator expr
+bitwise_expr: expr bitwise_operator expr
+dml_expr: dml_operator expr
+variable_declaration: "final"? type name ["=" expr]
+array_initializer: "{" [expr ("," expr)* ] "}"
+map_initializer: "{" map_assignment_list "}"
+atom: type | number | string+
+
+// only supported in old Apex API versions 
+type_parameter_list: "<" type ("," type)* ">"
+typed_arg_list: type name ("," type name)*
+map_assignment_list: expr "=>" expr ("," expr "=>" expr)*
+assignment_list: name "=" expr ("," name "=" expr)*
+arg_list: expr ("," expr)*
+
+type: name type_parameter_list? "[]"? ["." type]
+
+// terminals
+logical_operator: "&&"
+					| "||"
+comparison_operator: "=="
+					| "==="
+					| "<"
+					| ">"
+					| ">="
+					| "<="
+					| "!="
+					| "!=="
+assignment_operator: "=" 
+					| "+="
+					| "*="
+					| "-="
+					| "/="
+					| "|="
+					| "&="
+					| "<<="
+					| ">>="
+					| ">>>="
+bitwise_operator: "&"
+					| "|"
+					| "^"
+					| "^="
+					| "<<"
+					| ">>"
+					| ">>>"
+dml_operator: "delete"
+				| "insert"
+				| "undelete"
+				| "update"
+				| "upsert"
+class_word: "class"
+arithmatic_operator: "+" | "-" | "/" | "*"  
 static: "static"
-line: LINE
-LINE: NAME? /.+/ ";"
-		| /[a-zA-Z 0-9={}]*/ "enum" /[,a-zA-Z 0-9={}]+/ 
-		| /@[a-zA-Z0-9]*/
-		| "}"? "else" /.*/
-		| "}"? "else if" /.*/
-		| "for" /.*/
-		| "while" /.*/
-string : ESCAPED_STRING
-type : NAME
+string: /'(.*?(?<!\\))'/
 name : NAME
-comment : inline_comment | multiline_comment
-inline_comment : /\/\/.*/
-multiline_comment: /\/\*.*?\*\//sm
+number : /\d+|(\d*[\.]\d*)/
+SEMICOLON: ";"
 %import common.CNAME -> NAME
-%import common.ESCAPED_STRING
-%import common.SIGNED_NUMBER
 %import common.WS
 %ignore WS
+COMMENT: /\/\/.*/ 
+%ignore COMMENT
+ML_COMMENT: /\/\*.*?\*\//sm 
+%ignore ML_COMMENT
