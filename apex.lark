@@ -1,18 +1,24 @@
 ?start: class_declaration
 			 | enum_declaration
+			 | interface_declaration
 			 // | trigger_declaration
-			 // | interface_declaration
+
+// interface specific
+interface_declaration: annotation_declaration? modifier* INTERFACE name type_parameter_list? extends_class_or_interface? interface_body
+interface_body: CURLY_BRACKET_OPEN class_member* CURLY_BRACKET_CLOSE
 
 // class specific
-class_declaration: annotation_declaration? modifier* CLASS name type_parameter_list? extends_class? implements_class? CURLY_BRACKET_OPEN class_member* CURLY_BRACKET_CLOSE
+class_declaration: annotation_declaration? modifier* CLASS name type_parameter_list? extends_class_or_interface? implements_interface? class_body
+class_body: CURLY_BRACKET_OPEN class_member* CURLY_BRACKET_CLOSE
 class_member: enum_declaration
 				| class_declaration // inner class
+				| interface_declaration // inner interface
 				| property_declaration
 				| constructor_declaration
 				| method_declaration
 				| block 
-extends_class: EXTENDS type
-implements_class: IMPLEMENTS arg_list
+extends_class_or_interface: EXTENDS type
+implements_interface: IMPLEMENTS arg_list
 constructor_declaration: annotation_declaration? modifier* name [ROUND_BRACKET_OPEN typed_arg_list? ROUND_BRACKET_CLOSE] block
 method_declaration: annotation_declaration? modifier* type name ROUND_BRACKET_OPEN typed_arg_list? ROUND_BRACKET_CLOSE (block | SEMICOLON)
 property_declaration: annotation_declaration? modifier* type name [SEMICOLON | EQUALS expr SEMICOLON | property_accessors]
@@ -69,6 +75,7 @@ finally_clause: FINALLY block
 throw_statement: THROW expr SEMICOLON
 expr: atom 
 		| variable_declaration
+		| expr assignment_operator expr
 		| prefix_expr
 		| postfix_expr
 		| logical_expr
@@ -84,6 +91,7 @@ expr: atom
 		| expr ROUND_BRACKET_OPEN [arg_list | assignment_list] ROUND_BRACKET_CLOSE // constructor
 		| expr DOT expr // attribute access
 		| expr DOT CLASS // get class
+		| expr DOT NEW // Trigger.new
 		| expr DOT GET // get object
 		| expr DOT SET // set 
 		| expr INSTANCE_OF type
@@ -234,8 +242,8 @@ bitwise_operator: AMP
 					| PIPE
 					| CARET
 					| BITWISE_SHIFT_LEFT
-					| BITWISE_SHIFT_RIGHT
-					| BITWISE_SHIFT_RIGHT_UNSIGNED
+					| bitwise_shift_right
+					| bitwise_shift_right_unsigned
 dml_operator: DELETE
 				| INSERT
 				| UNDELETE
@@ -282,6 +290,7 @@ GET: "get"i
 SET: "set"i
 FINAL: "final"i
 CLASS: "class"i
+INTERFACE: "interface"i
 INSERT: "insert"i
 DELETE: "delete"i
 UNDELETE: "undelete"i
@@ -324,8 +333,9 @@ BITWISE_SHIFT_LEFT_ASSIGNMENT_OP: "<<="
 BITWISE_SHIFT_RIGHT_ASSIGNMENT_OP: ">>="
 BITWISE_SHIFT_RIGHT_UNSIGNED_ASSIGMENT_OP: ">>>="
 BITWISE_SHIFT_LEFT: "<<"
-BITWISE_SHIFT_RIGHT: ">>"
-BITWISE_SHIFT_RIGHT_UNSIGNED: ">>>"
+// needs to be this way because of closing type lists
+bitwise_shift_right: ANGLE_BRACKET_CLOSE ANGLE_BRACKET_CLOSE 
+bitwise_shift_right_unsigned: ANGLE_BRACKET_CLOSE ANGLE_BRACKET_CLOSE ANGLE_BRACKET_CLOSE
 greater_than: ANGLE_BRACKET_CLOSE
 ANGLE_BRACKET_CLOSE: ">"
 less_than: ANGLE_BRACKET_OPEN
