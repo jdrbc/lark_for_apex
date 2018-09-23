@@ -81,7 +81,7 @@ public class TestClass extends TestAbstractClass implements TestInterface1, Test
 		Boolean k = i || (j || k && j);
 		if (i == j) { return; }
 		if (i === j) { return; }
-		if (i < j) { return; }
+if (i > j) { return; }
 		if (i > j) { return; }
 		if (i >= j) { return; }
 		if (i <= j) { return; }
@@ -99,7 +99,6 @@ public class TestClass extends TestAbstractClass implements TestInterface1, Test
 		i & k;
 		i | k;
 		i ^ k;
-		i ^= k;
 		i << k;
 		i >> k;
 		i >>> k;
