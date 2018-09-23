@@ -102,7 +102,7 @@ expr: atom
 // =============== SOQL ================		
 // https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_select.htm
 soql_query_expr: soql_select_expr soql_from_expr soql_optional_expr? 
-soql_optional_expr: soql_where_expr? soql_with_expr? soql_group_by_expr? soql_order_by_expr? soql_limit_expr? soql_offset_expr? soql_for_expr?
+soql_optional_expr: soql_where_expr? soql_with_expr? soql_group_by_expr? soql_order_by_expr? soql_limit_expr? soql_offset_expr? soql_for_expr? all_rows?
 
 // soql select
 soql_select_expr: SELECT soql_field_list type_of_expr?
@@ -389,6 +389,7 @@ REFERENCE: "REFERENCE"i
 // UPDATE: "UPDATE"i
 TRACKING: "TRACKING"i
 VIEWSTAT: "VIEWSTAT"i
+all_rows: "ALL"i "ROWS"i
 AVG: "AVG"i
 COUNT: "COUNT"i
 COUNT_DISTINCT: "COUNT_DISTINCT"i
