@@ -250,7 +250,7 @@ dml_operator: DELETE
 				| UPDATE
 				| UPSERT
 string: /'(.*?(?<!\\))'/
-number : /\d+|(\d*[\.]\d*)/
+number : /(\d*\.\d*)|\d+/
 name : NAME
 arithmatic_operator: PLUS | MINUS | DIVIDE | MULTIPLY
 PLUS_PLUS: "++"
