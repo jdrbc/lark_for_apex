@@ -116,11 +116,11 @@ def inject_profiling(apexClass):
 
 def parse_file(grammer, file_name):
     print("parsing {}".format(file_name))
-    with open(file_name) as file_to_parse:
+    with open(file_name, encoding='utf-8') as file_to_parse:
         try:
             file_contents = file_to_parse.read()
-        except Exception:
-            print("error reading file") 
+        except Exception as e:
+            print("error reading file: {}".format(str(e))) 
             return           
         manager = multiprocessing.Manager()
         namespace = manager.Namespace()
