@@ -28,7 +28,7 @@ property_accessors: CURLY_BRACKET_OPEN [access_modifier? GET (block | SEMICOLON)
 enum_declaration: access_modifier? ENUM name CURLY_BRACKET_OPEN arg_list CURLY_BRACKET_CLOSE
 
 // modifiers
-annotation_declaration: AT_SYMBOL name [ROUND_BRACKET_OPEN [name EQUALS name] ROUND_BRACKET_CLOSE]
+annotation_declaration: AT_SYMBOL name [ROUND_BRACKET_OPEN [name EQUALS expr] ROUND_BRACKET_CLOSE]
 modifier: access_modifier 
 			| WITH SHARING 
 			| WITHOUT SHARING
@@ -112,7 +112,7 @@ else_expr: ELSE soql_field_list
 
 // soql from
 soql_from_expr: FROM soql_object_type_list soql_using_scope_expr?
-soql_using_scope_expr: USING_SCOPE name 
+soql_using_scope_expr: using_scope name 
 
 // soql where
 soql_where_expr: WHERE soql_condition_expr
@@ -143,18 +143,18 @@ soql_date_value: /\d\d\d\d-\d\d-\d\d/
 soql_date_time_value: /\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(Z|((\+|-)\d\d:\d\d))/
 
 // soql with
-soql_with_expr: WITH DATA_CATEGORY? soql_filtering_expr
+soql_with_expr: WITH data_category? soql_filtering_expr
 soql_filtering_expr: soql_data_category_selection (AND soql_data_category_selection)*
 soql_data_category_selection: soql_data_category [AT_KEYWORD | ABOVE] soql_data_category
 soql_data_category: soql_object_type
 
 // soql group by
-soql_group_by_expr: GROUP_BY (soql_field_list | ROLLUP soql_field_list | CUBE soql_field_list) soql_having_expression?
+soql_group_by_expr: group_by (soql_field_list | ROLLUP soql_field_list | CUBE soql_field_list) soql_having_expression?
 soql_having_expression: HAVING soql_having_condition_expression
 soql_having_condition_expression: soql_condition_expr 
 
 // soql order by
-soql_order_by_expr: ORDER_BY soql_field_list  [NULLS (FIRST|LAST)]
+soql_order_by_expr: order_by soql_order_by_field_list [NULLS (FIRST|LAST)]
 soql_order_by_field_list: soql_field [ASC|DESC] ("," soql_field [ASC|DESC])*
 
 // soql limit
@@ -201,13 +201,13 @@ atom: type | number | string+
 // only supported in old Apex API versions 
 type_parameter_list: ANGLE_BRACKET_OPEN type (COMMA type)* ANGLE_BRACKET_CLOSE
 typed_arg_list: type name (COMMA type name)*
-map_assignment_list: expr ARROW expr (COMMA expr ARROW expr)*
+map_assignment_list: expr arrow expr (COMMA expr arrow expr)*
 assignment_list: name EQUALS expr (COMMA name EQUALS expr)*
 arg_list: expr (COMMA expr)*
 name_list: name (COMMA name)*
 
 type: (name | system_type) type_parameter_list? [SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE] [DOT type]
-system_type: FALSE|TRUE|SET|ARRAY|BIGDECIMAL|BLOB|BYTE|CHAR|CONST|DECIMAL|EXCEPTION|FLOAT|FUTURE|INT|LIST|LONG|MAP|MERGE|NULL|NUMBER|OBJECT|ROLLBACK|SAVEPOINT|SUPER|SYSTEM|THIS|TRANSACTION|TRIGGER
+system_type: FALSE|TRUE|SET|ARRAY|BIGDECIMAL|BLOB|BYTE|CHAR|CONST|DECIMAL|EXCEPTION|FLOAT|FUTURE|INT|LIST|LONG|MAP|MERGE|NULL|NUMBER|OBJECT|ROLLBACK|SAVEPOINT|SUPER|SYSTEM|THIS|TRANSACTION|TRIGGER|TYPE
 
 // terminals
 prefix_operator: PLUS_PLUS
@@ -254,7 +254,7 @@ dml_operator: DELETE
 string: /'(.*?(?<!\\))'/
 number : /(\d*\.\d*)|\d+/
 name : NAME | terminal_that_is_also_valid_name
-terminal_that_is_also_valid_name: ABOVE|AT_KEYWORD|AVG|COUNT|CUBE|EXCLUDES|FIRST|GET|INCLUDES|LAST|MAX|MIN|OFFSET|REFERENCE|ROLLUP|SHARING|SUM|TRACKING|TYPEOF|VIEW|VIEWSTAT|WITH|WITHOUT
+terminal_that_is_also_valid_name: DATA|CATEGORY|ORDER|BY|CONVERTCURRENCY|COUNT_DISTINCT|FUTURE|LAST_90_DAYS|LAST_MONTH|LAST_N_DAYS|LAST_WEEK|NEXT_90_DAYS|NEXT_MONTH|NEXT_N_DAYS|NEXT_WEEK|RETURNING|SAVEPOINT|SEARCH|STAT|THIS_MONTH|THIS_WEEK|TOLABEL|TODAY|YESTERDAY|TOMORROW|ACTIVATE|INSERT|UPDATE|UPSERT|DELETE|MERGE|ABOVE|AT_KEYWORD|AVG|COUNT|CUBE|EXCLUDES|FIRST|GET|INCLUDES|LAST|MAX|MIN|OFFSET|REFERENCE|ROLLUP|SHARING|SUM|TRACKING|TYPE|TYPEOF|VIEW|VIEWSTAT|WITH|WITHOUT
 arithmatic_operator: PLUS | MINUS | DIVIDE | MULTIPLY
 PLUS_PLUS: "++"
 MINUS_MINUS: "--"
@@ -301,7 +301,7 @@ UPDATE: "update"i
 UPSERT: "upsert"i
 STATIC: "static"i
 INSTANCE_OF: "instanceof"i
-ARROW: EQUALS ANGLE_BRACKET_CLOSE
+arrow: EQUALS ANGLE_BRACKET_CLOSE
 QUESTION_MARK: "?"
 COLON: ":"
 DOT: "."
@@ -360,7 +360,8 @@ TYPEOF: "TYPEOF"i
 THEN: "then"i
 END: "END"i
 FROM: "FROM"i
-USING_SCOPE: "USING"i "SCOPE"i
+USING: "USING"i
+using_scope: USING "SCOPE"i
 WHERE: "WHERE"i
 LIKE: "LIKE"i
 NOT: "NOT"i
@@ -371,14 +372,19 @@ EXCLUDES: "EXCLUDES"i
 AND: "AND"i
 OR: "OR"i
 // WITH: "WITH"i
-DATA_CATEGORY: "DATA"i "CATEGORY"i
-AT_KEYWORD: "AT"
-ABOVE: "ABOVE"
-GROUP_BY: "GROUP"i "BY"i
+DATA: "DATA"i
+CATEGORY: "CATEGORY"i
+data_category: DATA CATEGORY
+AT_KEYWORD: "AT"i
+ABOVE: "ABOVE"i
+GROUP: "GROUP"i
+group_by: GROUP "BY"i
 ROLLUP: "ROLLUP"i 
 CUBE: "CUBE"i 
 HAVING: "HAVING"i
-ORDER_BY: "ORDER"i "BY"i
+ORDER: "ORDER"i 
+BY: "BY"i
+order_by: ORDER BY
 ASC: "ASC"i
 DESC: "DESC"i
 NULLS: "NULLS"i
