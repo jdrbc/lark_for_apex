@@ -21,7 +21,7 @@ extends_class_or_interface: EXTENDS type
 implements_interface: IMPLEMENTS arg_list
 constructor_declaration: annotation_declaration? modifier* name [ROUND_BRACKET_OPEN typed_arg_list? ROUND_BRACKET_CLOSE] block
 method_declaration: annotation_declaration? modifier* type name ROUND_BRACKET_OPEN typed_arg_list? ROUND_BRACKET_CLOSE (block | SEMICOLON)
-property_declaration: annotation_declaration? modifier* type name [SEMICOLON | EQUALS expr SEMICOLON | property_accessors]
+property_declaration: annotation_declaration? modifier* type name_list [SEMICOLON | EQUALS expr SEMICOLON | property_accessors]
 property_accessors: CURLY_BRACKET_OPEN [access_modifier? GET (block | SEMICOLON)] [access_modifier? SET (block | SEMICOLON)] CURLY_BRACKET_CLOSE
 
 // enum specific
@@ -204,9 +204,10 @@ typed_arg_list: type name (COMMA type name)*
 map_assignment_list: expr ARROW expr (COMMA expr ARROW expr)*
 assignment_list: name EQUALS expr (COMMA name EQUALS expr)*
 arg_list: expr (COMMA expr)*
+name_list: name (COMMA name)*
 
 type: (name | system_type) type_parameter_list? [SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE] [DOT type]
-system_type: SET
+system_type: FALSE|TRUE|SET|ARRAY|BIGDECIMAL|BLOB|BYTE|CHAR|CONST|DECIMAL|EXCEPTION|FLOAT|FUTURE|INT|LIST|LONG|MAP|MERGE|NULL|NUMBER|OBJECT|ROLLBACK|SAVEPOINT|SUPER|SYSTEM|THIS|TRANSACTION|TRIGGER
 
 // terminals
 prefix_operator: PLUS_PLUS
@@ -249,9 +250,11 @@ dml_operator: DELETE
 				| UNDELETE
 				| UPDATE
 				| UPSERT
+				| MERGE
 string: /'(.*?(?<!\\))'/
 number : /(\d*\.\d*)|\d+/
-name : NAME
+name : NAME | terminal_that_is_also_valid_name
+terminal_that_is_also_valid_name: ABOVE|AT_KEYWORD|AVG|COUNT|CUBE|EXCLUDES|FIRST|GET|INCLUDES|LAST|MAX|MIN|OFFSET|REFERENCE|ROLLUP|SHARING|SUM|TRACKING|TYPEOF|VIEW|VIEWSTAT|WITH|WITHOUT
 arithmatic_operator: PLUS | MINUS | DIVIDE | MULTIPLY
 PLUS_PLUS: "++"
 MINUS_MINUS: "--"
@@ -396,6 +399,85 @@ COUNT_DISTINCT: "COUNT_DISTINCT"i
 MIN: "MIN"i
 MAX: "MAX"i
 SUM: "SUM"i
+
+// other reserved keywords:
+ACTIVATE: "ACTIVATE"i
+ANY: "ANY"i
+ARRAY: "ARRAY"i
+AS: "AS"i
+AUTONOMOUS: "AUTONOMOUS"i
+BEGIN: "BEGIN"i
+BIGDECIMAL: "BIGDECIMAL"i
+BLOB: "BLOB"i
+BULK: "BULK"i
+BYTE: "BYTE"i
+CASE: "CASE"i
+CAST: "CAST"i
+CHAR: "CHAR"i
+COLLECT: "COLLECT"i
+COMMIT: "COMMIT"i
+CONST: "CONST"i
+CONVERTCURRENCY: "CONVERTCURRENCY"i
+DECIMAL: "DECIMAL"i
+DEFAULT: "DEFAULT"i
+EXCEPTION: "EXCEPTION"i
+EXIT: "EXIT"i
+EXPORT: "EXPORT"i
+FALSE: "FALSE"i
+FLOAT: "FLOAT"i
+FUTURE: "FUTURE"i
+GOTO: "GOTO"i
+HINT: "HINT"i
+IMPORT: "IMPORT"i
+INNER: "INNER"i
+INT: "INT"i
+INTO: "INTO"i
+JOIN: "JOIN"i
+LAST_90_DAYS: "LAST_90_DAYS"i
+LAST_MONTH: "LAST_MONTH"i
+LAST_N_DAYS: "LAST_N_DAYS"i
+LAST_WEEK: "LAST_WEEK"i
+LIST: "LIST"i
+LONG: "LONG"i
+LOOP: "LOOP"i
+MAP: "MAP"i
+MERGE: "MERGE"i
+NEXT_90_DAYS: "NEXT_90_DAYS"i
+NEXT_MONTH: "NEXT_MONTH"i
+NEXT_N_DAYS: "NEXT_N_DAYS"i
+NEXT_WEEK: "NEXT_WEEK"i
+NULL: "NULL"i
+NUMBER: "NUMBER"i
+OBJECT: "OBJECT"i
+OF: "OF"i
+OUTER: "OUTER"i
+PACKAGE: "PACKAGE"i
+PARALLEL: "PARALLEL"i
+PRAGMA: "PRAGMA"i
+RETRIEVE: "RETRIEVE"i
+RETURNING: "RETURNING"i
+ROLLBACK: "ROLLBACK"i
+SAVEPOINT: "SAVEPOINT"i
+SEARCH: "SEARCH"i
+SHORT: "SHORT"i
+SORT: "SORT"i
+STAT: "STAT"i
+SUPER: "SUPER"i
+SYNCHRONIZED: "SYNCHRONIZED"i
+SYSTEM: "SYSTEM"i
+TESTMETHOD: "TESTMETHOD"i
+THIS: "THIS"i
+THIS_MONTH: "THIS_MONTH"i
+THIS_WEEK: "THIS_WEEK"i
+TODAY: "TODAY"i
+TOLABEL: "TOLABEL"i
+TOMORROW: "TOMORROW"i
+TRANSACTION: "TRANSACTION"i
+TRIGGER: "TRIGGER"i
+TRUE: "TRUE"i
+TYPE: "TYPE"i
+WEBSERVICE: "WEBSERVICE"i
+YESTERDAY: "YESTERDAY"i
       
 %import common.CNAME -> NAME
 %import common.WS
