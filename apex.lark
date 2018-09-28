@@ -25,7 +25,7 @@ property_declaration: annotation_declaration? modifier* type name_list [SEMICOLO
 property_accessors: CURLY_BRACKET_OPEN [access_modifier? GET (block | SEMICOLON)] [access_modifier? SET (block | SEMICOLON)] CURLY_BRACKET_CLOSE
 
 // enum specific
-enum_declaration: access_modifier? ENUM name CURLY_BRACKET_OPEN arg_list CURLY_BRACKET_CLOSE
+enum_declaration: annotation_declaration? access_modifier? ENUM name CURLY_BRACKET_OPEN arg_list CURLY_BRACKET_CLOSE
 
 // modifiers
 annotation_declaration: AT_SYMBOL name [ROUND_BRACKET_OPEN [name EQUALS expr] ROUND_BRACKET_CLOSE]
@@ -100,6 +100,9 @@ expr: atom
 		| expr map_initializer
 		| expr QUESTION_MARK expr COLON expr
 
+// =============== SOSL ================
+// TODO https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_sosl.htm		
+
 // =============== SOQL ================		
 // https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_select.htm
 soql_query_expr: soql_select_expr soql_from_expr soql_optional_expr? 
@@ -117,9 +120,9 @@ soql_using_scope_expr: using_scope name
 
 // soql where
 soql_where_expr: WHERE soql_condition_expr
-soql_condition_expr: soql_field_expr (soql_logical_operator soql_condition_expr)?
-soql_field_expr: ROUND_BRACKET_OPEN soql_field_expr ROUND_BRACKET_CLOSE
-					| soql_field soql_comparison_operator soql_value
+soql_condition_expr: soql_field_expr (soql_logical_operator soql_condition_expr)? 
+					| ROUND_BRACKET_OPEN soql_condition_expr ROUND_BRACKET_CLOSE
+soql_field_expr: soql_field soql_comparison_operator soql_value
 					| soql_field_expr EQUALS soql_field_expr
 soql_comparison_operator: EQUALS 
 							| LIKE 
@@ -129,7 +132,7 @@ soql_comparison_operator: EQUALS
 							| LESS_THAN_OR_EQUAL
 							| GREATER_THAN_OR_EQUAL
 							| IN
-							| NOT_IN
+							| not_in
 							| INCLUDES
 							| EXCLUDES
 soql_logical_operator: AND | OR | NOT
@@ -137,9 +140,26 @@ soql_value: COLON expr // variables
 		| name
 		| number
 		| string
-		| name COLON number // e.g. LAST_N_DAYS:n
+		| soql_n_days_terminal COLON number // e.g. LAST_N_DAYS:n
+		| soql_value_terminal
+soql_value_terminal: TRUE
+		| FALSE
+		| LAST_90_DAYS
+		| LAST_MONTH
+		| LAST_WEEK
+		| NEXT_90_DAYS
+		| NEXT_MONTH
+		| NEXT_WEEK
+		| NULL
+		| THIS_MONTH
+		| THIS_WEEK
+		| TODAY
+		| TOMORROW
+		| YESTERDAY
 		| soql_date_value 
 		| soql_date_time_value
+soql_n_days_terminal:LAST_N_DAYS
+		| NEXT_N_DAYS 
 soql_date_value: /\d\d\d\d-\d\d-\d\d/
 soql_date_time_value: /\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(Z|((\+|-)\d\d:\d\d))/
 
@@ -255,7 +275,7 @@ dml_operator: DELETE
 string: /'(.*?(?<!\\))'/
 number : /(\d*\.\d*)|\d+/
 name : NAME | terminal_that_is_also_valid_name
-terminal_that_is_also_valid_name: THEN|TRANSIENT|DATA|CATEGORY|ORDER|BY|CONVERTCURRENCY|COUNT_DISTINCT|FUTURE|LAST_90_DAYS|LAST_MONTH|LAST_N_DAYS|LAST_WEEK|NEXT_90_DAYS|NEXT_MONTH|NEXT_N_DAYS|NEXT_WEEK|RETURNING|SAVEPOINT|SEARCH|STAT|THIS_MONTH|THIS_WEEK|TOLABEL|TODAY|YESTERDAY|TOMORROW|ACTIVATE|INSERT|UPDATE|UPSERT|DELETE|MERGE|ABOVE|AT_KEYWORD|AVG|COUNT|CUBE|EXCLUDES|FIRST|GET|INCLUDES|LAST|MAX|MIN|OFFSET|REFERENCE|ROLLUP|SHARING|SUM|TRACKING|TYPE|TYPEOF|VIEW|VIEWSTAT|WITH|WITHOUT
+terminal_that_is_also_valid_name: SET|WHEN|THEN|TRANSIENT|DATA|CATEGORY|ORDER|BY|CONVERTCURRENCY|COUNT_DISTINCT|FUTURE|LAST_90_DAYS|LAST_MONTH|LAST_N_DAYS|LAST_WEEK|NEXT_90_DAYS|NEXT_MONTH|NEXT_N_DAYS|NEXT_WEEK|RETURNING|SAVEPOINT|SEARCH|STAT|THIS_MONTH|THIS_WEEK|TOLABEL|TODAY|YESTERDAY|TOMORROW|ACTIVATE|INSERT|UPDATE|UPSERT|DELETE|MERGE|ABOVE|AT_KEYWORD|AVG|COUNT|CUBE|EXCLUDES|FIRST|GET|INCLUDES|LAST|MAX|MIN|OFFSET|REFERENCE|ROLLUP|SHARING|SUM|TRACKING|TYPE|TYPEOF|VIEW|VIEWSTAT|WITH|WITHOUT
 arithmatic_operator: PLUS | MINUS | DIVIDE | MULTIPLY
 PLUS_PLUS: "++"
 MINUS_MINUS: "--"
@@ -367,7 +387,7 @@ using_scope: USING "SCOPE"i
 WHERE: "WHERE"i
 LIKE: "LIKE"i
 NOT: "NOT"i
-NOT_IN: NOT IN
+not_in: NOT IN
 IN: "IN"i
 INCLUDES: "INCLUDES"i
 EXCLUDES: "EXCLUDES"i
