@@ -124,6 +124,7 @@ soql_condition_expr: soql_field_expr (soql_logical_operator soql_condition_expr)
 					| round_bracket_open soql_condition_expr round_bracket_close
 soql_field_expr: soql_field soql_comparison_operator soql_value
 					| soql_field_expr equals soql_field_expr
+					| soql_field (in | not_in) round_bracket_open soql_query_expr round_bracket_close
 soql_comparison_operator: equals 
 							| like 
 							| not_equals
@@ -131,8 +132,6 @@ soql_comparison_operator: equals
 							| greater_than
 							| less_than_or_equal
 							| greater_than_or_equal
-							| in
-							| not_in
 							| includes
 							| excludes
 soql_logical_operator: and | or | not
