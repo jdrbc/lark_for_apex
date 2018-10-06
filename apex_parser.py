@@ -150,7 +150,7 @@ def check_parse_result(p):
             # inject_profiling(apexClass)
             # print('apexClass: ' + str(apexClass.getContents()))
         else:
-            print("ERROR: during parse of {}: {}".format(p["file_name"], ["namespace.error_msg"]))
+            print("ERROR: during parse of {}: {}".format(p["file_name"], p["namespace"].error_msg))
 
 def parse_file(grammer, file_name):
     print("parsing {}".format(file_name))
