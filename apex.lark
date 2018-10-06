@@ -1,3 +1,4 @@
+// TODO checkout https://github.com/neowit/tooling-force.com/blob/master/src/main/java/Apexcode.g4
 ?start: class_declaration
 			 | enum_declaration
 			 | interface_declaration
@@ -141,7 +142,7 @@ soql_comparison_operator: equals
 soql_logical_operator: and | or | not
 soql_value: colon expr // variables 
 		| name
-		| number
+		| minus? number
 		| string
 		| soql_n_days_terminal colon number // e.g. last_n_days:n
 		| soql_value_terminal
@@ -182,7 +183,7 @@ soql_order_by_expr: order_by soql_order_by_field_list [nulls (first|last)]
 soql_order_by_field_list: soql_field [asc|desc] ("," soql_field [asc|desc])*
 
 // soql limit
-soql_limit_expr: limit number
+soql_limit_expr: limit (number | colon expr)
 
 // soql offset
 soql_offset_expr: offset number
@@ -276,9 +277,9 @@ dml_operator: delete
 				| upsert
 				| merge
 string: /'(.*?(?<!\\))'/
-number: /((\d*\.\d+)|\d+)[l|l]?/
+number: /((\d*\.\d+)|\d+)[l|L]?/
 name: NAME | terminal_that_is_valid_name
-terminal_that_is_valid_name: on|get|set|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|bulk|case|cast|char|collect|commit|const|convertcurrency|decimal|default|exception|exit|export|float|future|goto|hint|import|inner|int|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
+terminal_that_is_valid_name: on|get|set|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|bulk|case|cast|char|collect|const|convertcurrency|exit|export|float|future|goto|hint|import|inner|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
 method_name: NAME|extends|implements|enum|with|without|sharing|abstract|virtual|override|public|private|global|protected|return|do|while|for|switch|on|when|if|else|break|continue|try|catch|finally|throw|new|get|set|final|transient|class|interface|insert|delete|undelete|update|upsert|static|instance_of|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|blob|bulk|byte|case|cast|char|collect|commit|const|convertcurrency|decimal|default|exception|exit|export|false|float|future|goto|hint|import|inner|int|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
 arithmatic_operator: plus | minus | divide | multiply
 plus_plus: "++"
