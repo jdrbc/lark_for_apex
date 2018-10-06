@@ -89,6 +89,7 @@ expr: atom
 		| new expr 
 		| round_bracket_open type round_bracket_close expr // cast
 		| expr square_bracket_open arg_list? square_bracket_close // array index access
+		| expr dot method_name round_bracket_open [arg_list | assignment_list] round_bracket_close // method
 		| expr round_bracket_open [arg_list | assignment_list] round_bracket_close // constructor
 		| expr dot expr // attribute access
 		| expr dot class // get class
@@ -219,7 +220,7 @@ dml_expr: dml_operator expr
 variable_declaration: final? type name [equals expr]
 array_initializer: curly_bracket_open [expr (comma expr)* ] curly_bracket_close
 map_initializer: curly_bracket_open map_assignment_list curly_bracket_close
-atom: type | number | string+
+atom: name | type | number | string+
 
 // only supported in old apex api versions 
 type_parameter_list: angle_bracket_open type (comma type)* angle_bracket_close
@@ -278,7 +279,7 @@ string: /'(.*?(?<!\\))'/
 number: /((\d*\.\d+)|\d+)[l|l]?/
 name: NAME | terminal_that_is_valid_name
 terminal_that_is_valid_name: on|get|set|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|bulk|case|cast|char|collect|commit|const|convertcurrency|decimal|default|exception|exit|export|float|future|goto|hint|import|inner|int|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
-method_name: name|extends|implements|enum|with|without|sharing|abstract|virtual|override|public|private|global|protected|return|do|while|for|switch|on|when|if|else|break|continue|try|catch|finally|throw|new|get|set|final|transient|class|interface|insert|delete|undelete|update|upsert|static|instance_of|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|blob|bulk|byte|case|cast|char|collect|commit|const|convertcurrency|decimal|default|exception|exit|export|false|float|future|goto|hint|import|inner|int|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
+method_name: NAME|extends|implements|enum|with|without|sharing|abstract|virtual|override|public|private|global|protected|return|do|while|for|switch|on|when|if|else|break|continue|try|catch|finally|throw|new|get|set|final|transient|class|interface|insert|delete|undelete|update|upsert|static|instance_of|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|blob|bulk|byte|case|cast|char|collect|commit|const|convertcurrency|decimal|default|exception|exit|export|false|float|future|goto|hint|import|inner|int|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
 arithmatic_operator: plus | minus | divide | multiply
 plus_plus: "++"
 minus_minus: "--"
