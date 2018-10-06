@@ -114,8 +114,7 @@ def inject_profiling(apexClass):
             # inject before all returns 
             # method.addLineBeforeReturns(ApexLine("Profiler.exit('" + className + "', '" + name + "');"))
 
-def parse_file(grammer, file_name):
-    print("parsing {}".format(file_name))
+def parse_file_process(grammer, file_name):
     with open(file_name, encoding='utf-8') as file_to_parse:
         try:
             file_contents = file_to_parse.read()
@@ -129,29 +128,57 @@ def parse_file(grammer, file_name):
         p = multiprocessing.Process(target=parse, args=(grammer, file_contents, namespace))
         time_start = time()
         p.start()
+        return { 
+            "process": p, 
+            "file_name": file_name, 
+            "time_start": time_start, 
+            "namespace": namespace 
+        }
 
-        # Wait
-        p.join(30)
-
-        # If thread is still active
-        if p.is_alive():
-            print("too slow parse of {}!".format(file_name))
-            p.terminate()
-            p.join()
+def check_parse_result(p):
+    # If thread is still active
+    p["process"].join(60)
+    if p["process"].is_alive():
+        print("ERROR: too slow parse of {}!".format(p["file_name"]))
+        p["process"].terminate()
+        p["process"].join()
+    else:
+        if (p["namespace"].tree != None):
+            delta = round(time() - p["time_start"], 2)
+            print("successful parse {} in {}s".format(p["file_name"], delta))
+            # apexClass = transform(namespace.tree)
+            # inject_profiling(apexClass)
+            # print('apexClass: ' + str(apexClass.getContents()))
         else:
-            if (namespace.tree != None):
-                delta = round(time() - time_start, 2)
-                print("successful parse {} in {}s".format(file_name, delta))
-                # apexClass = transform(namespace.tree)
-                # inject_profiling(apexClass)
-                # print('apexClass: ' + str(apexClass.getContents()))
-            else:
-                print("error during parse of {}: {}".format(file_name, namespace.error_msg))
+            print("ERROR: during parse of {}: {}".format(p["file_name"], ["namespace.error_msg"]))
+
+def parse_file(grammer, file_name):
+    print("parsing {}".format(file_name))
+    p = parse_file_process(grammer, file_name)
+    # Wait
+    p["process"].join(60)
+    check_parse_result(p)
 
 def parse_file_list(grammer, apex_file_list_name):
+    file_names = []
     with open(apex_file_list_name, encoding='utf-8') as file_list:
         for file_name in file_list:
-            parse_file(grammer, file_name[0:-1]) # chop off newline
+            # remove newline
+            if file_name[-1] == '\n':
+                file_name = file_name[0:-1]
+            file_names.append(file_name)  
+
+    processes = []
+    for i in range(len(file_names)):
+        processes.append(parse_file_process(grammer, file_names[i]))
+        if i != 0 and i % 4 == 0:
+            for process in processes:
+                process["process"].join(60)
+                check_parse_result(process)
+            processes = []
+    for process in processes:
+        process["process"].join(60)
+        check_parse_result(process)
 
 def parse_dir(grammer, apex_directory_name):
     def walkErrorHandler(exception):
