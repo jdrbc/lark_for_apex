@@ -131,7 +131,7 @@ def parse_file(grammer, file_name):
         p.start()
 
         # Wait
-        p.join(10)
+        p.join(30)
 
         # If thread is still active
         if p.is_alive():
@@ -148,6 +148,10 @@ def parse_file(grammer, file_name):
             else:
                 print("error during parse of {}: {}".format(file_name, namespace.error_msg))
 
+def parse_file_list(grammer, apex_file_list_name):
+    with open(apex_file_list_name, encoding='utf-8') as file_list:
+        for file_name in file_list:
+            parse_file(grammer, file_name[0:-1]) # chop off newline
 
 def parse_dir(grammer, apex_directory_name):
     def walkErrorHandler(exception):
@@ -162,6 +166,7 @@ if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description='Manipulate Apex')
     arg_parser.add_argument('grammer_file')
     arg_parser.add_argument('-f', '--apex_file')
+    arg_parser.add_argument('-fl', '--apex_file_list')
     arg_parser.add_argument('-d', '--apex_dir')
     args = arg_parser.parse_args()
 
@@ -173,4 +178,7 @@ if __name__ == '__main__':
 
         if args.apex_dir != None:
             parse_dir(grammer, args.apex_dir)
+
+        if args.apex_file_list != None:
+            parse_file_list(grammer, args.apex_file_list)
 
