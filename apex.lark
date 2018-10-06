@@ -20,7 +20,7 @@ class_member: enum_declaration
 extends_class_or_interface: extends type
 implements_interface: implements arg_list
 constructor_declaration: annotation_declaration? modifier* name [round_bracket_open typed_arg_list? round_bracket_close] block
-method_declaration: annotation_declaration? modifier* type name round_bracket_open typed_arg_list? round_bracket_close (block | semicolon)
+method_declaration: annotation_declaration? modifier* type method_name round_bracket_open typed_arg_list? round_bracket_close (block | semicolon)
 property_declaration: annotation_declaration? modifier* type name_list [semicolon | equals expr semicolon | property_accessors]
 property_accessors: curly_bracket_open [access_modifier? get (block | semicolon)] [access_modifier? set (block | semicolon)] curly_bracket_close
 
@@ -68,7 +68,7 @@ when_statement: when (expr (comma expr)* | else) block
 if_statement: if par_expr (statement | block)
 else_statement: else statement
 break_statement: break semicolon
-continue_statement: contnue semicolon
+continue_statement: continue semicolon
 try_statement: try_block catch_clause* finally_clause?
 try_block: try block
 catch_clause: catch round_bracket_open typed_arg_list round_bracket_close block
@@ -199,8 +199,8 @@ soql_object_type_list: soql_object_type (comma soql_object_type)*
 
 soql_object_type: name (dot soql_object_type)* 
 soql_subquery: round_bracket_open soql_query_expr round_bracket_close
-soql_field: name (dot soql_field)*
-soql_aggregate_field: soql_aggregate_field_avg
+soql_field: name (dot soql_field)* name? // alias
+soql_aggregate_field: soql_aggregate_field_avg name? // alias
 soql_aggregate_field_avg: avg round_bracket_open soql_field round_bracket_close
 							| count round_bracket_open soql_field? round_bracket_close
 							| count_distinct round_bracket_open soql_field? round_bracket_close
@@ -223,7 +223,7 @@ atom: type | number | string+
 
 // only supported in old apex api versions 
 type_parameter_list: angle_bracket_open type (comma type)* angle_bracket_close
-typed_arg_list: type name (comma type name)*
+typed_arg_list: final? type name (comma final? type name)*
 map_assignment_list: expr arrow expr (comma expr arrow expr)*
 assignment_list: name equals expr (comma name equals expr)*
 arg_list: expr (comma expr)*
@@ -277,7 +277,8 @@ dml_operator: delete
 string: /'(.*?(?<!\\))'/
 number: /((\d*\.\d+)|\d+)[l|l]?/
 name: NAME | terminal_that_is_valid_name
-terminal_that_is_valid_name: extends|implements|enum|with|without|sharing|abstract|virtual|override|public|private|global|protected|return|do|while|for|switch|on|when|if|else|break|contnue|try|catch|finally|throw|new|get|set|final|transient|class|interface|insert|delete|undelete|update|upsert|static|instance_of|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|blob|bulk|byte|case|cast|char|collect|commit|const|convertcurrency|decimal|default|exception|exit|export|false|float|future|goto|hint|import|inner|int|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
+terminal_that_is_valid_name: on|get|set|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|bulk|case|cast|char|collect|commit|const|convertcurrency|decimal|default|exception|exit|export|float|future|goto|hint|import|inner|int|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
+method_name: name|extends|implements|enum|with|without|sharing|abstract|virtual|override|public|private|global|protected|return|do|while|for|switch|on|when|if|else|break|continue|try|catch|finally|throw|new|get|set|final|transient|class|interface|insert|delete|undelete|update|upsert|static|instance_of|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|blob|bulk|byte|case|cast|char|collect|commit|const|convertcurrency|decimal|default|exception|exit|export|false|float|future|goto|hint|import|inner|int|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
 arithmatic_operator: plus | minus | divide | multiply
 plus_plus: "++"
 minus_minus: "--"
@@ -306,7 +307,7 @@ when: "when"i
 if: "if"i
 else: "else"i
 break: "break"i
-contnue: "continue"i
+continue: "continue"i
 try: "try"i
 catch: "catch"i
 finally: "finally"i
