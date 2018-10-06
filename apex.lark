@@ -120,7 +120,8 @@ soql_using_scope_expr: using_scope name
 
 // soql where
 soql_where_expr: where soql_condition_expr
-soql_condition_expr: soql_field_expr (soql_logical_operator soql_condition_expr)? 
+soql_condition_expr: soql_field_expr 
+					| soql_condition_expr soql_logical_operator soql_condition_expr 
 					| round_bracket_open soql_condition_expr round_bracket_close
 soql_field_expr: soql_field soql_comparison_operator soql_value
 					| soql_field_expr equals soql_field_expr
