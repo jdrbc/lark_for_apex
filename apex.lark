@@ -4,12 +4,12 @@
 			 // | trigger_declaration
 
 // interface specific
-interface_declaration: annotation_declaration? modifier* INTERFACE name type_parameter_list? extends_class_or_interface? interface_body
-interface_body: CURLY_BRACKET_OPEN class_member* CURLY_BRACKET_CLOSE
+interface_declaration: annotation_declaration? modifier* interface name type_parameter_list? extends_class_or_interface? interface_body
+interface_body: curly_bracket_open class_member* curly_bracket_close
 
 // class specific
-class_declaration: annotation_declaration? modifier* CLASS name type_parameter_list? extends_class_or_interface? implements_interface? class_body
-class_body: CURLY_BRACKET_OPEN class_member* CURLY_BRACKET_CLOSE
+class_declaration: annotation_declaration? modifier* class name type_parameter_list? extends_class_or_interface? implements_interface? class_body
+class_body: curly_bracket_open class_member* curly_bracket_close
 class_member: enum_declaration
 				| class_declaration // inner class
 				| interface_declaration // inner interface
@@ -17,34 +17,34 @@ class_member: enum_declaration
 				| constructor_declaration
 				| method_declaration
 				| block 
-extends_class_or_interface: EXTENDS type
-implements_interface: IMPLEMENTS arg_list
-constructor_declaration: annotation_declaration? modifier* name [ROUND_BRACKET_OPEN typed_arg_list? ROUND_BRACKET_CLOSE] block
-method_declaration: annotation_declaration? modifier* type name ROUND_BRACKET_OPEN typed_arg_list? ROUND_BRACKET_CLOSE (block | SEMICOLON)
-property_declaration: annotation_declaration? modifier* type name_list [SEMICOLON | EQUALS expr SEMICOLON | property_accessors]
-property_accessors: CURLY_BRACKET_OPEN [access_modifier? GET (block | SEMICOLON)] [access_modifier? SET (block | SEMICOLON)] CURLY_BRACKET_CLOSE
+extends_class_or_interface: extends type
+implements_interface: implements arg_list
+constructor_declaration: annotation_declaration? modifier* name [round_bracket_open typed_arg_list? round_bracket_close] block
+method_declaration: annotation_declaration? modifier* type name round_bracket_open typed_arg_list? round_bracket_close (block | semicolon)
+property_declaration: annotation_declaration? modifier* type name_list [semicolon | equals expr semicolon | property_accessors]
+property_accessors: curly_bracket_open [access_modifier? get (block | semicolon)] [access_modifier? set (block | semicolon)] curly_bracket_close
 
 // enum specific
-enum_declaration: annotation_declaration? access_modifier? ENUM name CURLY_BRACKET_OPEN arg_list CURLY_BRACKET_CLOSE
+enum_declaration: annotation_declaration? access_modifier? enum name curly_bracket_open arg_list curly_bracket_close
 
 // modifiers
-annotation_declaration: AT_SYMBOL name [ROUND_BRACKET_OPEN [name EQUALS expr] ROUND_BRACKET_CLOSE]
+annotation_declaration: at_symbol name [round_bracket_open [name equals expr] round_bracket_close]
 modifier: access_modifier 
-			| WITH SHARING 
-			| WITHOUT SHARING
-			| ABSTRACT
-			| VIRTUAL
-			| OVERRIDE
-			| STATIC
-			| FINAL
-			| TRANSIENT
-!access_modifier: PUBLIC | PRIVATE | GLOBAL | PROTECTED
+			| with sharing 
+			| without sharing
+			| abstract
+			| virtual
+			| override
+			| static
+			| final
+			| transient
+!access_modifier: public | private | global | protected
 
 // block contents
-block: STATIC? CURLY_BRACKET_OPEN statement* CURLY_BRACKET_CLOSE
+block: static? curly_bracket_open statement* curly_bracket_close
 statement: (expr
-				| variable_declaration (COMMA statement)*
-				| assignment_statement (COMMA statement)*
+				| variable_declaration (comma statement)*
+				| assignment_statement (comma statement)*
 				| return_statement
 				| do_statement
 				| while_statement
@@ -57,23 +57,23 @@ statement: (expr
 				| continue_statement
 				| try_statement
 				| throw_statement
-			 	| block) SEMICOLON? 
+			 	| block) semicolon? 
 assignment_statement: expr assignment_operator expr
-return_statement: RETURN expr? SEMICOLON
-do_statement: DO block while_statement SEMICOLON
-while_statement: WHILE par_expr statement? block?
-for_statement: FOR ROUND_BRACKET_OPEN [statement? SEMICOLON expr? SEMICOLON expr? | expr COLON expr] ROUND_BRACKET_CLOSE statement? block? SEMICOLON?
-switch_statement: SWITCH ON expr block
-when_statement: WHEN (expr (COMMA expr)* | ELSE) block
-if_statement: IF par_expr (statement | block)
-else_statement: ELSE statement
-break_statement: BREAK SEMICOLON
-continue_statement: CONTNUE SEMICOLON
+return_statement: return expr? semicolon
+do_statement: do block while_statement semicolon
+while_statement: while par_expr statement? block?
+for_statement: for round_bracket_open [statement? semicolon expr? semicolon expr? | expr colon expr] round_bracket_close statement? block? semicolon?
+switch_statement: switch on expr block
+when_statement: when (expr (comma expr)* | else) block
+if_statement: if par_expr (statement | block)
+else_statement: else statement
+break_statement: break semicolon
+continue_statement: contnue semicolon
 try_statement: try_block catch_clause* finally_clause?
-try_block: TRY block
-catch_clause: CATCH ROUND_BRACKET_OPEN typed_arg_list ROUND_BRACKET_CLOSE block
-finally_clause: FINALLY block
-throw_statement: THROW expr SEMICOLON
+try_block: try block
+catch_clause: catch round_bracket_open typed_arg_list round_bracket_close block
+finally_clause: finally block
+throw_statement: throw expr semicolon
 expr: atom 
 		| variable_declaration
 		| expr assignment_operator expr
@@ -85,128 +85,128 @@ expr: atom
 		| bitwise_expr
 		| par_expr
 		| dml_expr
-		| SQUARE_BRACKET_OPEN soql_query_expr SQUARE_BRACKET_CLOSE
-		| NEW expr 
-		| ROUND_BRACKET_OPEN type ROUND_BRACKET_CLOSE expr // cast
-		| expr SQUARE_BRACKET_OPEN arg_list? SQUARE_BRACKET_CLOSE // array index access
-		| expr ROUND_BRACKET_OPEN [arg_list | assignment_list] ROUND_BRACKET_CLOSE // constructor
-		| expr DOT expr // attribute access
-		| expr DOT CLASS // get class
-		| expr DOT NEW // Trigger.new
-		| expr DOT GET // get object
-		| expr DOT SET // set 
-		| expr INSTANCE_OF type
+		| square_bracket_open soql_query_expr square_bracket_close
+		| new expr 
+		| round_bracket_open type round_bracket_close expr // cast
+		| expr square_bracket_open arg_list? square_bracket_close // array index access
+		| expr round_bracket_open [arg_list | assignment_list] round_bracket_close // constructor
+		| expr dot expr // attribute access
+		| expr dot class // get class
+		| expr dot new // trigger.new
+		| expr dot get // get object
+		| expr dot set // set 
+		| expr instance_of type
 		| expr array_initializer
 		| expr map_initializer
-		| expr QUESTION_MARK expr COLON expr
+		| expr question_mark expr colon expr
 
-// =============== SOSL ================
-// TODO https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_sosl.htm		
+// =============== sosl ================
+// todo https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_sosl.htm		
 
-// =============== SOQL ================		
+// =============== soql ================		
 // https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_select.htm
 soql_query_expr: soql_select_expr soql_from_expr soql_optional_expr? 
 soql_optional_expr: soql_where_expr? soql_with_expr? soql_group_by_expr? soql_order_by_expr? soql_limit_expr? soql_offset_expr? soql_for_expr? all_rows?
 
 // soql select
-soql_select_expr: SELECT soql_field_list type_of_expr?
-type_of_expr: TYPEOF type when_expr+ else_expr? END
-when_expr: WHEN type THEN soql_field_list
-else_expr: ELSE soql_field_list
+soql_select_expr: select soql_field_list type_of_expr?
+type_of_expr: typeof type when_expr+ else_expr? end
+when_expr: when type then soql_field_list
+else_expr: else soql_field_list
 
 // soql from
-soql_from_expr: FROM soql_object_type_list soql_using_scope_expr?
+soql_from_expr: from soql_object_type_list soql_using_scope_expr?
 soql_using_scope_expr: using_scope name 
 
 // soql where
-soql_where_expr: WHERE soql_condition_expr
+soql_where_expr: where soql_condition_expr
 soql_condition_expr: soql_field_expr (soql_logical_operator soql_condition_expr)? 
-					| ROUND_BRACKET_OPEN soql_condition_expr ROUND_BRACKET_CLOSE
+					| round_bracket_open soql_condition_expr round_bracket_close
 soql_field_expr: soql_field soql_comparison_operator soql_value
-					| soql_field_expr EQUALS soql_field_expr
-soql_comparison_operator: EQUALS 
-							| LIKE 
-							| NOT_EQUALS
+					| soql_field_expr equals soql_field_expr
+soql_comparison_operator: equals 
+							| like 
+							| not_equals
 							| less_than
 							| greater_than
-							| LESS_THAN_OR_EQUAL
-							| GREATER_THAN_OR_EQUAL
-							| IN
+							| less_than_or_equal
+							| greater_than_or_equal
+							| in
 							| not_in
-							| INCLUDES
-							| EXCLUDES
-soql_logical_operator: AND | OR | NOT
-soql_value: COLON expr // variables 
+							| includes
+							| excludes
+soql_logical_operator: and | or | not
+soql_value: colon expr // variables 
 		| name
 		| number
 		| string
-		| soql_n_days_terminal COLON number // e.g. LAST_N_DAYS:n
+		| soql_n_days_terminal colon number // e.g. last_n_days:n
 		| soql_value_terminal
-soql_value_terminal: TRUE
-		| FALSE
-		| LAST_90_DAYS
-		| LAST_MONTH
-		| LAST_WEEK
-		| NEXT_90_DAYS
-		| NEXT_MONTH
-		| NEXT_WEEK
-		| NULL
-		| THIS_MONTH
-		| THIS_WEEK
-		| TODAY
-		| TOMORROW
-		| YESTERDAY
+soql_value_terminal: true
+		| false
+		| last_90_days
+		| last_month
+		| last_week
+		| next_90_days
+		| next_month
+		| next_week
+		| null
+		| this_month
+		| this_week
+		| today
+		| tomorrow
+		| yesterday
 		| soql_date_value 
 		| soql_date_time_value
-soql_n_days_terminal:LAST_N_DAYS
-		| NEXT_N_DAYS 
+soql_n_days_terminal:last_n_days
+		| next_n_days 
 soql_date_value: /\d\d\d\d-\d\d-\d\d/
-soql_date_time_value: /\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(Z|((\+|-)\d\d:\d\d))/
+soql_date_time_value: /\d\d\d\d-\d\d-\d\dt\d\d:\d\d:\d\d(z|((\+|-)\d\d:\d\d))/
 
 // soql with
-soql_with_expr: WITH data_category? soql_filtering_expr
-soql_filtering_expr: soql_data_category_selection (AND soql_data_category_selection)*
-soql_data_category_selection: soql_data_category [AT_KEYWORD | ABOVE] soql_data_category
+soql_with_expr: with data_category? soql_filtering_expr
+soql_filtering_expr: soql_data_category_selection (and soql_data_category_selection)*
+soql_data_category_selection: soql_data_category [at_keyword | above] soql_data_category
 soql_data_category: soql_object_type
 
 // soql group by
-soql_group_by_expr: group_by (soql_field_list | ROLLUP soql_field_list | CUBE soql_field_list) soql_having_expression?
-soql_having_expression: HAVING soql_having_condition_expression
+soql_group_by_expr: group_by (soql_field_list | rollup soql_field_list | cube soql_field_list) soql_having_expression?
+soql_having_expression: having soql_having_condition_expression
 soql_having_condition_expression: soql_condition_expr 
 
 // soql order by
-soql_order_by_expr: order_by soql_order_by_field_list [NULLS (FIRST|LAST)]
-soql_order_by_field_list: soql_field [ASC|DESC] ("," soql_field [ASC|DESC])*
+soql_order_by_expr: order_by soql_order_by_field_list [nulls (first|last)]
+soql_order_by_field_list: soql_field [asc|desc] ("," soql_field [asc|desc])*
 
 // soql limit
-soql_limit_expr: LIMIT number
+soql_limit_expr: limit number
 
 // soql offset
-soql_offset_expr: OFFSET number
+soql_offset_expr: offset number
 
 // soql for
-soql_for_expr: FOR (VIEW | VIEWSTAT | REFERENCE | UPDATE)* ["," soql_tracking_viewstat_list]
+soql_for_expr: for (view | viewstat | reference | update)* ["," soql_tracking_viewstat_list]
 
 // soql update
-soql_update_expr: UPDATE soql_tracking_viewstat_list
-soql_tracking_viewstat_list: (TRACKING|VIEWSTAT) ("," (TRACKING | VIEWSTAT))
+soql_update_expr: update soql_tracking_viewstat_list
+soql_tracking_viewstat_list: (tracking|viewstat) ("," (tracking | viewstat))
 
-soql_field_list: soql_field_list_item (COMMA soql_field_list_item)* 
+soql_field_list: soql_field_list_item (comma soql_field_list_item)* 
 soql_field_list_item: soql_field | soql_subquery | soql_aggregate_field
-soql_object_type_list: soql_object_type (COMMA soql_object_type)*
+soql_object_type_list: soql_object_type (comma soql_object_type)*
 
-soql_object_type: name (DOT soql_object_type)* 
-soql_subquery: ROUND_BRACKET_OPEN soql_query_expr ROUND_BRACKET_CLOSE
-soql_field: name (DOT soql_field)*
+soql_object_type: name (dot soql_object_type)* 
+soql_subquery: round_bracket_open soql_query_expr round_bracket_close
+soql_field: name (dot soql_field)*
 soql_aggregate_field: soql_aggregate_field_avg
-soql_aggregate_field_avg: AVG ROUND_BRACKET_OPEN soql_field ROUND_BRACKET_CLOSE
-							| COUNT ROUND_BRACKET_OPEN soql_field? ROUND_BRACKET_CLOSE
-							| COUNT_DISTINCT ROUND_BRACKET_OPEN soql_field? ROUND_BRACKET_CLOSE
-							| MIN ROUND_BRACKET_OPEN soql_field ROUND_BRACKET_CLOSE
-							| MAX ROUND_BRACKET_OPEN soql_field ROUND_BRACKET_CLOSE
-							| SUM ROUND_BRACKET_OPEN soql_field ROUND_BRACKET_CLOSE
+soql_aggregate_field_avg: avg round_bracket_open soql_field round_bracket_close
+							| count round_bracket_open soql_field? round_bracket_close
+							| count_distinct round_bracket_open soql_field? round_bracket_close
+							| min round_bracket_open soql_field round_bracket_close
+							| max round_bracket_open soql_field round_bracket_close
+							| sum round_bracket_open soql_field round_bracket_close
 
-par_expr: ROUND_BRACKET_OPEN expr ROUND_BRACKET_CLOSE
+par_expr: round_bracket_open expr round_bracket_close
 prefix_expr: prefix_operator expr
 postfix_expr: expr postfix_operator
 logical_expr: expr logical_operator expr
@@ -214,300 +214,301 @@ comparison_expr: expr comparison_operator expr
 artimatic_expr: expr arithmatic_operator expr
 bitwise_expr: expr bitwise_operator expr
 dml_expr: dml_operator expr
-variable_declaration: FINAL? type name [EQUALS expr]
-array_initializer: CURLY_BRACKET_OPEN [expr (COMMA expr)* ] CURLY_BRACKET_CLOSE
-map_initializer: CURLY_BRACKET_OPEN map_assignment_list CURLY_BRACKET_CLOSE
+variable_declaration: final? type name [equals expr]
+array_initializer: curly_bracket_open [expr (comma expr)* ] curly_bracket_close
+map_initializer: curly_bracket_open map_assignment_list curly_bracket_close
 atom: type | number | string+
 
-// only supported in old Apex API versions 
-type_parameter_list: ANGLE_BRACKET_OPEN type (COMMA type)* ANGLE_BRACKET_CLOSE
-typed_arg_list: type name (COMMA type name)*
-map_assignment_list: expr arrow expr (COMMA expr arrow expr)*
-assignment_list: name EQUALS expr (COMMA name EQUALS expr)*
-arg_list: expr (COMMA expr)*
-name_list: name (COMMA name)*
+// only supported in old apex api versions 
+type_parameter_list: angle_bracket_open type (comma type)* angle_bracket_close
+typed_arg_list: type name (comma type name)*
+map_assignment_list: expr arrow expr (comma expr arrow expr)*
+assignment_list: name equals expr (comma name equals expr)*
+arg_list: expr (comma expr)*
+name_list: name (comma name)*
 
-type: (name | system_type) type_parameter_list? [SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE] [DOT type]
-system_type: FALSE|TRUE|SET|ARRAY|BIGDECIMAL|BLOB|BYTE|CHAR|CONST|DECIMAL|EXCEPTION|FLOAT|FUTURE|INT|LIST|LONG|MAP|MERGE|NULL|NUMBER|OBJECT|ROLLBACK|SAVEPOINT|SUPER|SYSTEM|THIS|TRANSACTION|TRIGGER|TYPE
+type: (name | system_type) type_parameter_list? [square_bracket_open square_bracket_close] [dot type]
+system_type: false|true|set|array|bigdecimal|blob|byte|char|const|decimal|exception|float|future|int|list|long|map|merge|null|number|object|rollback|savepoint|super|system|this|transaction|trigger|type_keyword
 
 // terminals
-prefix_operator: PLUS_PLUS
-					| MINUS_MINUS
-					| EXCL
-					| TILDE // Bitwise compliment
-					| PLUS // Unary plus
-					| MINUS // Unary minus - negate
-postfix_operator: PLUS_PLUS
-					| MINUS_MINUS
-logical_operator: AND_LOGICAL_OPERATOR
-					| OR_LOGICAL_OPERATOR
-comparison_operator: EQUALS_COMPARE // ==
-					| EQUALS_COMPARE_MEM // ===
+prefix_operator: plus_plus
+					| minus_minus
+					| excl
+					| tilde // bitwise compliment
+					| plus // unary plus
+					| minus // unary minus - negate
+postfix_operator: plus_plus
+					| minus_minus
+logical_operator: and_logical_operator
+					| or_logical_operator
+comparison_operator: equals_compare // ==
+					| equals_compare_mem // ===
 					| less_than // "<"
 					| greater_than // >
-					| GREATER_THAN_OR_EQUAL // ">="
-					| LESS_THAN_OR_EQUAL //"<="
-					| NOT_EQUALS // !=
-					| NOT_EQUALS_MEM // "!=="
-assignment_operator: EQUALS 
-					| PLUS_EQUALS
-					| MULTIPLY_EQUALS
-					| MINUS_EQUALS
-					| DIVIDE_EQUALS
-					| BITWISE_OR_ASSIGNMENT_OP
-					| BITWISE_AND_ASSIGNMENT_OP
-					| BITWISE_XOR_ASSIGNMENT_OP
-					| BITWISE_SHIFT_LEFT_ASSIGNMENT_OP
-					| BITWISE_SHIFT_RIGHT_ASSIGNMENT_OP
-					| BITWISE_SHIFT_RIGHT_UNSIGNED_ASSIGMENT_OP
-bitwise_operator: AMP
-					| PIPE
-					| CARET
-					| BITWISE_SHIFT_LEFT
+					| greater_than_or_equal // ">="
+					| less_than_or_equal //"<="
+					| not_equals // !=
+					| not_equals_mem // "!=="
+assignment_operator: equals 
+					| plus_equals
+					| multiply_equals
+					| minus_equals
+					| divide_equals
+					| bitwise_or_assignment_op
+					| bitwise_and_assignment_op
+					| bitwise_xor_assignment_op
+					| bitwise_shift_left_assignment_op
+					| bitwise_shift_right_assignment_op
+					| bitwise_shift_right_unsigned_assigment_op
+bitwise_operator: amp
+					| pipe
+					| caret
+					| bitwise_shift_left
 					| bitwise_shift_right
 					| bitwise_shift_right_unsigned
-dml_operator: DELETE
-				| INSERT
-				| UNDELETE
-				| UPDATE
-				| UPSERT
-				| MERGE
+dml_operator: delete
+				| insert
+				| undelete
+				| update
+				| upsert
+				| merge
 string: /'(.*?(?<!\\))'/
-number : /((\d*\.\d+)|\d+)[l|L]?/
-name : NAME | terminal_that_is_also_valid_name
-terminal_that_is_also_valid_name: ALL|ROWS|SET|WHEN|THEN|TRANSIENT|DATA|CATEGORY|ORDER|BY|CONVERTCURRENCY|COUNT_DISTINCT|FUTURE|LAST_90_DAYS|LAST_MONTH|LAST_N_DAYS|LAST_WEEK|NEXT_90_DAYS|NEXT_MONTH|NEXT_N_DAYS|NEXT_WEEK|RETURNING|SAVEPOINT|SEARCH|STAT|THIS_MONTH|THIS_WEEK|TOLABEL|TODAY|YESTERDAY|TOMORROW|ACTIVATE|INSERT|UPDATE|UPSERT|DELETE|MERGE|ABOVE|AT_KEYWORD|AVG|COUNT|CUBE|EXCLUDES|FIRST|GET|INCLUDES|LAST|MAX|MIN|OFFSET|REFERENCE|ROLLUP|SHARING|SUM|TRACKING|TYPE|TYPEOF|VIEW|VIEWSTAT|WITH|WITHOUT
-arithmatic_operator: PLUS | MINUS | DIVIDE | MULTIPLY
-PLUS_PLUS: "++"
-MINUS_MINUS: "--"
-AND_LOGICAL_OPERATOR: "&&"
-OR_LOGICAL_OPERATOR: "||"
-EXTENDS: "extends"i
-IMPLEMENTS: "implements"i
-ENUM: "enum"i
-WITH: "with"i
-WITHOUT: "without"i
-SHARING: "sharing"i
-ABSTRACT: "abstract"i
-VIRTUAL: "virtual"i
-OVERRIDE: "override"i
-PUBLIC: "public"i
-PRIVATE: "private"i
-GLOBAL: "global"i
-PROTECTED: "protected"i
-RETURN: "return"i
-DO: "do"i
-WHILE: "while"i
-FOR: "for"i
-SWITCH: "switch"i
-ON: "on"i
-WHEN: "when"i
-IF: "if"i
-ELSE: "else"i
-BREAK: "break"i
-CONTNUE: "continue"i
-TRY: "try"i
-CATCH: "catch"i
-FINALLY: "finally"i
-THROW: "throw"i
-NEW: "new"i
-GET: "get"i
-SET: "set"i
-FINAL: "final"i
-TRANSIENT:"transient"i
-CLASS: "class"i
-INTERFACE: "interface"i
-INSERT: "insert"i
-DELETE: "delete"i
-UNDELETE: "undelete"i
-UPDATE: "update"i
-UPSERT: "upsert"i
-STATIC: "static"i
-INSTANCE_OF: "instanceof"i
-arrow: EQUALS ANGLE_BRACKET_CLOSE
-QUESTION_MARK: "?"
-COLON: ":"
-DOT: "."
-COMMA: ","
-TILDE: "~"
-MULTIPLY: "*"
-DIVIDE: "/"
-MINUS: "-"
-PLUS: "+"
-CARET: "^"
-EXCL: "!"
-AMP: "&"
-PIPE: "|"
-SEMICOLON: ";"
-EQUALS: "="
-EQUALS_COMPARE: "=="
-EQUALS_COMPARE_MEM: "==="
-NOT_EQUALS: "!="
-NOT_EQUALS_MEM: "!=="
-PLUS_EQUALS: "+="
-MULTIPLY_EQUALS: "*="
-MINUS_EQUALS: "-="
-DIVIDE_EQUALS: "/="
-BITWISE_OR_ASSIGNMENT_OP: "|="
-BITWISE_AND_ASSIGNMENT_OP: "&="
-BITWISE_XOR_ASSIGNMENT_OP: "^="
-bitwise_and: AMP
-bitwise_or: PIPE
-bitwise_xor: CARET
-BITWISE_EXCLUSIVE_OR_ASSIGNMENT_OP: "^="
-BITWISE_SHIFT_LEFT_ASSIGNMENT_OP: "<<="
-BITWISE_SHIFT_RIGHT_ASSIGNMENT_OP: ">>="
-BITWISE_SHIFT_RIGHT_UNSIGNED_ASSIGMENT_OP: ">>>="
-BITWISE_SHIFT_LEFT: "<<"
+number: /((\d*\.\d+)|\d+)[l|l]?/
+name: NAME | terminal_that_is_valid_name
+terminal_that_is_valid_name: extends|implements|enum|with|without|sharing|abstract|virtual|override|public|private|global|protected|return|do|while|for|switch|on|when|if|else|break|contnue|try|catch|finally|throw|new|get|set|final|transient|class|interface|insert|delete|undelete|update|upsert|static|instance_of|select|typeof|then|end|from|using|scope|where|like|not|in|includes|excludes|and|or|data|category|at_keyword|above|group|rollup|cube|having|order|by|asc|desc|nulls|first|last|limit|offset|view|reference|tracking|viewstat|all|rows|avg|count|count_distinct|min|max|sum|activate|any|array|as|autonomous|begin|bigdecimal|blob|bulk|byte|case|cast|char|collect|commit|const|convertcurrency|decimal|default|exception|exit|export|false|float|future|goto|hint|import|inner|int|into|join|last_90_days|last_month|last_n_days|last_week|list|long|loop|map|merge|next_90_days|next_month|next_n_days|next_week|null|number_keyword|object|of|outer|package|parallel|pragma|retrieve|returning|rollback|savepoint|search|short|sort|stat|super|synchronized|system|testmethod|this|this_month|this_week|today|tolabel|tomorrow|transaction|trigger|true|type_keyword|webservice|yesterday
+arithmatic_operator: plus | minus | divide | multiply
+plus_plus: "++"
+minus_minus: "--"
+and_logical_operator: "&&"
+or_logical_operator: "||"
+extends: "extends"i
+implements: "implements"i
+enum: "enum"i
+with: "with"i
+without: "without"i
+sharing: "sharing"i
+abstract: "abstract"i
+virtual: "virtual"i
+override: "override"i
+public: "public"i
+private: "private"i
+global: "global"i
+protected: "protected"i
+return: "return"i
+do: "do"i
+while: "while"i
+for: "for"i
+switch: "switch"i
+on: "on"i
+when: "when"i
+if: "if"i
+else: "else"i
+break: "break"i
+contnue: "continue"i
+try: "try"i
+catch: "catch"i
+finally: "finally"i
+throw: "throw"i
+new: "new"i
+get: "get"i
+set: "set"i
+final: "final"i
+transient:"transient"i
+class: "class"i
+interface: "interface"i
+insert: "insert"i
+delete: "delete"i
+undelete: "undelete"i
+update: "update"i
+upsert: "upsert"i
+static: "static"i
+instance_of: "instanceof"i
+arrow: equals angle_bracket_close
+question_mark: "?"
+colon: ":"
+dot: "."
+comma: ","
+tilde: "~"
+multiply: "*"
+divide: "/"
+minus: "-"
+plus: "+"
+caret: "^"
+excl: "!"
+amp: "&"
+pipe: "|"
+semicolon: ";"
+equals: "="
+equals_compare: "=="
+equals_compare_mem: "==="
+not_equals: "!="
+not_equals_mem: "!=="
+plus_equals: "+="
+multiply_equals: "*="
+minus_equals: "-="
+divide_equals: "/="
+bitwise_or_assignment_op: "|="
+bitwise_and_assignment_op: "&="
+bitwise_xor_assignment_op: "^="
+bitwise_and: amp
+bitwise_or: pipe
+bitwise_xor: caret
+bitwise_exclusive_or_assignment_op: "^="
+bitwise_shift_left_assignment_op: "<<="
+bitwise_shift_right_assignment_op: ">>="
+bitwise_shift_right_unsigned_assigment_op: ">>>="
+bitwise_shift_left: "<<"
 // needs to be this way because of closing type lists
-bitwise_shift_right: ANGLE_BRACKET_CLOSE ANGLE_BRACKET_CLOSE 
-bitwise_shift_right_unsigned: ANGLE_BRACKET_CLOSE ANGLE_BRACKET_CLOSE ANGLE_BRACKET_CLOSE
-greater_than: ANGLE_BRACKET_CLOSE
-ANGLE_BRACKET_CLOSE: ">"
-less_than: ANGLE_BRACKET_OPEN
-LESS_THAN_OR_EQUAL: ">="
-GREATER_THAN_OR_EQUAL: "<="
-ANGLE_BRACKET_OPEN: "<"
-SQUARE_BRACKET_OPEN: "["
-SQUARE_BRACKET_CLOSE: "]"
-CURLY_BRACKET_OPEN: "{"
-CURLY_BRACKET_CLOSE: "}"
-ROUND_BRACKET_OPEN: "("
-ROUND_BRACKET_CLOSE: ")"
-AT_SYMBOL: "@"
+bitwise_shift_right: angle_bracket_close angle_bracket_close 
+bitwise_shift_right_unsigned: angle_bracket_close angle_bracket_close angle_bracket_close
+greater_than: angle_bracket_close
+angle_bracket_close: ">"
+less_than: angle_bracket_open
+less_than_or_equal: ">="
+greater_than_or_equal: "<="
+angle_bracket_open: "<"
+square_bracket_open: "["
+square_bracket_close: "]"
+curly_bracket_open: "{"
+curly_bracket_close: "}"
+round_bracket_open: "("
+round_bracket_close: ")"
+at_symbol: "@"
 
-// SOQL terminals
-SELECT: "SELECT"i
-TYPEOF: "TYPEOF"i
-// WHEN: "WHEN"i
-THEN: "then"i
-END: "END"i
-FROM: "FROM"i
-USING: "USING"i
-using_scope: USING "SCOPE"i
-WHERE: "WHERE"i
-LIKE: "LIKE"i
-NOT: "NOT"i
-not_in: NOT IN
-IN: "IN"i
-INCLUDES: "INCLUDES"i
-EXCLUDES: "EXCLUDES"i
-AND: "AND"i
-OR: "OR"i
-// WITH: "WITH"i
-DATA: "DATA"i
-CATEGORY: "CATEGORY"i
-data_category: DATA CATEGORY
-AT_KEYWORD: "AT"i
-ABOVE: "ABOVE"i
-GROUP: "GROUP"i
-group_by: GROUP BY
-ROLLUP: "ROLLUP"i 
-CUBE: "CUBE"i 
-HAVING: "HAVING"i
-ORDER: "ORDER"i 
-BY: "BY"i
-order_by: ORDER BY
-ASC: "ASC"i
-DESC: "DESC"i
-NULLS: "NULLS"i
-FIRST: "FIRST"i
-LAST: "LAST"i
-LIMIT: "LIMIT"i
-OFFSET: "OFFSET"i
-// FOR: "FOR"i
-VIEW: "VIEW"i
-REFERENCE: "REFERENCE"i
-// UPDATE: "UPDATE"i
-TRACKING: "TRACKING"i
-VIEWSTAT: "VIEWSTAT"i
-ALL: "ALL"i
-ROWS: "ROWS"i
-all_rows: ALL ROWS
-AVG: "AVG"i
-COUNT: "COUNT"i
-COUNT_DISTINCT: "COUNT_DISTINCT"i
-MIN: "MIN"i
-MAX: "MAX"i
-SUM: "SUM"i
+// soql terminals
+select: "select"i
+typeof: "typeof"i
+// when: "when"i
+then: "then"i
+end: "end"i
+from: "from"i
+using: "using"i
+scope: "scope"i
+using_scope: using scope
+where: "where"i
+like: "like"i
+not: "not"i
+not_in: not in
+in: "in"i
+includes: "includes"i
+excludes: "excludes"i
+and: "and"i
+or: "or"i
+// with: "with"i
+data: "data"i
+category: "category"i
+data_category: data category
+at_keyword: "at"i
+above: "above"i
+group: "group"i
+group_by: group by
+rollup: "rollup"i 
+cube: "cube"i 
+having: "having"i
+order: "order"i 
+by: "by"i
+order_by: order by
+asc: "asc"i
+desc: "desc"i
+nulls: "nulls"i
+first: "first"i
+last: "last"i
+limit: "limit"i
+offset: "offset"i
+// for: "for"i
+view: "view"i
+reference: "reference"i
+// update: "update"i
+tracking: "tracking"i
+viewstat: "viewstat"i
+all: "all"i
+rows: "rows"i
+all_rows: all rows
+avg: "avg"i
+count: "count"i
+count_distinct: "count_distinct"i
+min: "min"i
+max: "max"i
+sum: "sum"i
 
 // other reserved keywords:
-ACTIVATE: "ACTIVATE"i
-ANY: "ANY"i
-ARRAY: "ARRAY"i
-AS: "AS"i
-AUTONOMOUS: "AUTONOMOUS"i
-BEGIN: "BEGIN"i
-BIGDECIMAL: "BIGDECIMAL"i
-BLOB: "BLOB"i
-BULK: "BULK"i
-BYTE: "BYTE"i
-CASE: "CASE"i
-CAST: "CAST"i
-CHAR: "CHAR"i
-COLLECT: "COLLECT"i
-COMMIT: "COMMIT"i
-CONST: "CONST"i
-CONVERTCURRENCY: "CONVERTCURRENCY"i
-DECIMAL: "DECIMAL"i
-DEFAULT: "DEFAULT"i
-EXCEPTION: "EXCEPTION"i
-EXIT: "EXIT"i
-EXPORT: "EXPORT"i
-FALSE: "FALSE"i
-FLOAT: "FLOAT"i
-FUTURE: "FUTURE"i
-GOTO: "GOTO"i
-HINT: "HINT"i
-IMPORT: "IMPORT"i
-INNER: "INNER"i
-INT: "INT"i
-INTO: "INTO"i
-JOIN: "JOIN"i
-LAST_90_DAYS: "LAST_90_DAYS"i
-LAST_MONTH: "LAST_MONTH"i
-LAST_N_DAYS: "LAST_N_DAYS"i
-LAST_WEEK: "LAST_WEEK"i
-LIST: "LIST"i
-LONG: "LONG"i
-LOOP: "LOOP"i
-MAP: "MAP"i
-MERGE: "MERGE"i
-NEXT_90_DAYS: "NEXT_90_DAYS"i
-NEXT_MONTH: "NEXT_MONTH"i
-NEXT_N_DAYS: "NEXT_N_DAYS"i
-NEXT_WEEK: "NEXT_WEEK"i
-NULL: "NULL"i
-NUMBER: "NUMBER"i
-OBJECT: "OBJECT"i
-OF: "OF"i
-OUTER: "OUTER"i
-PACKAGE: "PACKAGE"i
-PARALLEL: "PARALLEL"i
-PRAGMA: "PRAGMA"i
-RETRIEVE: "RETRIEVE"i
-RETURNING: "RETURNING"i
-ROLLBACK: "ROLLBACK"i
-SAVEPOINT: "SAVEPOINT"i
-SEARCH: "SEARCH"i
-SHORT: "SHORT"i
-SORT: "SORT"i
-STAT: "STAT"i
-SUPER: "SUPER"i
-SYNCHRONIZED: "SYNCHRONIZED"i
-SYSTEM: "SYSTEM"i
-TESTMETHOD: "TESTMETHOD"i
-THIS: "THIS"i
-THIS_MONTH: "THIS_MONTH"i
-THIS_WEEK: "THIS_WEEK"i
-TODAY: "TODAY"i
-TOLABEL: "TOLABEL"i
-TOMORROW: "TOMORROW"i
-TRANSACTION: "TRANSACTION"i
-TRIGGER: "TRIGGER"i
-TRUE: "TRUE"i
-TYPE: "TYPE"i
-WEBSERVICE: "WEBSERVICE"i
-YESTERDAY: "YESTERDAY"i
+activate: "activate"i
+any: "any"i
+array: "array"i
+as: "as"i
+autonomous: "autonomous"i
+begin: "begin"i
+bigdecimal: "bigdecimal"i
+blob: "blob"i
+bulk: "bulk"i
+byte: "byte"i
+case: "case"i
+cast: "cast"i
+char: "char"i
+collect: "collect"i
+commit: "commit"i
+const: "const"i
+convertcurrency: "convertcurrency"i
+decimal: "decimal"i
+default: "default"i
+exception: "exception"i
+exit: "exit"i
+export: "export"i
+false: "false"i
+float: "float"i
+future: "future"i
+goto: "goto"i
+hint: "hint"i
+import: "import"i
+inner: "inner"i
+int: "int"i
+into: "into"i
+join: "join"i
+last_90_days: "last_90_days"i
+last_month: "last_month"i
+last_n_days: "last_n_days"i
+last_week: "last_week"i
+list: "list"i
+long: "long"i
+loop: "loop"i
+map: "map"i
+merge: "merge"i
+next_90_days: "next_90_days"i
+next_month: "next_month"i
+next_n_days: "next_n_days"i
+next_week: "next_week"i
+null: "null"i
+number_keyword: "number"i
+object: "object"i
+of: "of"i
+outer: "outer"i
+package: "package"i
+parallel: "parallel"i
+pragma: "pragma"i
+retrieve: "retrieve"i
+returning: "returning"i
+rollback: "rollback"i
+savepoint: "savepoint"i
+search: "search"i
+short: "short"i
+sort: "sort"i
+stat: "stat"i
+super: "super"i
+synchronized: "synchronized"i
+system: "system"i
+testmethod: "testmethod"i
+this: "this"i
+this_month: "this_month"i
+this_week: "this_week"i
+today: "today"i
+tolabel: "tolabel"i
+tomorrow: "tomorrow"i
+transaction: "transaction"i
+trigger: "trigger"i
+true: "true"i
+type_keyword: "type"i
+webservice: "webservice"i
+yesterday: "yesterday"i
       
 %import common.CNAME -> NAME
 %import common.WS
